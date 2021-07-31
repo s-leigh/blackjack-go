@@ -65,6 +65,12 @@ func DealHand(shuffledDeck *deck.Deck, isDealer bool) Hand {
 	return hand
 }
 
+func (h *Hand) DealCard(shuffledDeck *deck.Deck) {
+	newCard := (*shuffledDeck)[:1]
+	*shuffledDeck = (*shuffledDeck)[1:]
+	h.cards = append(h.cards, newCard[0])
+}
+
 func (h Hand) StringRepresentation() string {
 	var stringRep string
 	var numCardsToShow int

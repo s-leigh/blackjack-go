@@ -4,6 +4,7 @@ import (
 	"./deck"
 	"./hand"
 	"fmt"
+	"strings"
 )
 
 func main() {
@@ -15,4 +16,18 @@ func main() {
 
 	fmt.Printf("Your hand: %v\n", playerHand.StringRepresentation())
 	fmt.Printf("Dealer's hand: %v\n", dealerHand.StringRepresentation())
+
+	var input string
+	fmt.Println("[H]it or [S]tick?")
+
+	_, err := fmt.Scan(&input)
+	if err != nil {
+		fmt.Println("Error accepting input, terminating...")
+		return
+	}
+
+	if strings.ToLower(input) == "h" {
+		playerHand.DealCard(&shuffledDeck)
+		fmt.Printf("Your hand: %v\n", playerHand.StringRepresentation())
+	}
 }

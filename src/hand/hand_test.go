@@ -68,6 +68,18 @@ func TestDeck(t *testing.T) {
 		}
 	})
 
+	t.Run("DealCard adds card to hand", func(t *testing.T) {
+		shuffledDeck := deck.ShuffledDeck()
+		hand := Hand{[]deck.Card{{10, 'H'}, {'Q', 'C'}}, player}
+		hand.DealCard(&shuffledDeck)
+		if len(hand.cards) != 3 {
+			t.Errorf("Expected a hand of length 3, got %d", len(hand.cards))
+		}
+		if len(shuffledDeck) != 51 {
+			t.Errorf("Expected deck size of 51, got %d", len(shuffledDeck))
+		}
+	})
+
 	t.Run("StringRepresentation gives correct player representation", func(t *testing.T) {
 		hand := Hand{[]deck.Card{{10, 'H'}, {'Q', 'C'}}, player}
 		expectedRepr := "10 of H, Q of C - value: 20"
