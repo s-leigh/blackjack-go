@@ -7,16 +7,16 @@ import (
 
 const handSize = 2
 
-type Owner int
+type owner int
 
 const (
-	dealer Owner = iota
+	dealer owner = iota
 	player
 )
 
 type Hand struct {
 	cards []deck.Card
-	owner Owner
+	owner owner
 }
 
 func (h Hand) Value() int {
@@ -52,11 +52,16 @@ func (h Hand) Value() int {
 	return value
 }
 
-func DealHand(shuffledDeck *deck.Deck) Hand {
+func DealHand(shuffledDeck *deck.Deck, isDealer bool) Hand {
 	cards := (*shuffledDeck)[:handSize]
 	*shuffledDeck = (*shuffledDeck)[handSize:]
 	var hand Hand
 	hand.cards = cards
+	if isDealer {
+		hand.owner = dealer
+	} else {
+		hand.owner = player
+	}
 	return hand
 }
 
@@ -83,6 +88,9 @@ func (h Hand) StringRepresentation() string {
 		if h.owner == dealer {
 			stringRep += "[hidden card]"
 		}
+	}
+	if h.owner != dealer {
+		stringRep += fmt.Sprintf(" - value: %d", h.Value())
 	}
 	return stringRep
 }

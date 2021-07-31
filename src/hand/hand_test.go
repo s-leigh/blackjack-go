@@ -47,7 +47,7 @@ func TestDeck(t *testing.T) {
 	t.Run("DealHand returns hand", func(t *testing.T) {
 		shuffledDeck := deck.ShuffledDeck()
 		expectedHand := Hand{[]deck.Card{{Rank: 10, Suit: 'H'}, {Rank: 7, Suit: 'H'}, {Rank: 'J', Suit: 'S'}, {Rank: 'Q', Suit: 'S'}}, player}
-		hand := DealHand(&shuffledDeck)
+		hand := DealHand(&shuffledDeck, false)
 
 		if len(hand.cards) != 2 {
 			t.Errorf("hand length is %v", len(hand.cards))
@@ -61,8 +61,8 @@ func TestDeck(t *testing.T) {
 
 	t.Run("DealHand removes cards from deck", func(t *testing.T) {
 		shuffledDeck := deck.ShuffledDeck()
-		DealHand(&shuffledDeck)
-		DealHand(&shuffledDeck)
+		DealHand(&shuffledDeck, false)
+		DealHand(&shuffledDeck, true)
 		if len(shuffledDeck) != 48 {
 			t.Errorf("Expected deck size of 50, got %v", len(shuffledDeck))
 		}
@@ -70,7 +70,7 @@ func TestDeck(t *testing.T) {
 
 	t.Run("StringRepresentation gives correct player representation", func(t *testing.T) {
 		hand := Hand{[]deck.Card{{10, 'H'}, {'Q', 'C'}}, player}
-		expectedRepr := "10 of H, Q of C"
+		expectedRepr := "10 of H, Q of C - value: 20"
 		repr := hand.StringRepresentation()
 		if repr != expectedRepr {
 			t.Errorf("Expected %v got %v", expectedRepr, repr)
