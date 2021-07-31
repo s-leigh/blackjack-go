@@ -19,9 +19,16 @@ func DealHand(shuffledDeck *deck.Deck) Hand {
 	return hand
 }
 
-func StringRepresentation(hand Hand) string {
+func StringRepresentation(hand Hand, playersHand bool) string {
 	var stringRep string
-	for i, card := range hand {
+	var numCardsToShow int
+	if playersHand {
+		numCardsToShow = len(hand)
+	} else {
+		numCardsToShow = 1
+	}
+	for i := 0; i < numCardsToShow; i++ {
+		card := hand[i]
 		var value string
 		if card.Value > 10 {
 			value = string(card.Value)
@@ -31,6 +38,9 @@ func StringRepresentation(hand Hand) string {
 		stringRep += fmt.Sprintf("%v of %v", value, string(card.Suit))
 		if i != len(hand) - 1 {
 			stringRep += ", "
+		}
+		if !playersHand {
+			stringRep += "[hidden card]"
 		}
 	}
 	return stringRep
