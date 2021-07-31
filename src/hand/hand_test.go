@@ -9,9 +9,44 @@ import (
 func TestDeck(t *testing.T) {
 	rand.Seed(1)
 
+	t.Run("Hand value without aces calculated correctly", func(t *testing.T) {
+		hand1 := Hand{deck.Card{2, 'H'}, deck.Card{2, 'D'}}
+		if hand1.Value() != 4 {
+			t.Errorf("Expected hand value to be 4, got %d", hand1.Value())
+		}
+
+		handWithFaceCard := Hand{deck.Card{'Q', 'H'}, deck.Card{2, 'D'}}
+		if handWithFaceCard.Value() != 12 {
+			t.Errorf("Expected hand value to be 12, got %d", handWithFaceCard.Value())
+		}
+	})
+
+	t.Run("Hand value with aces calculated correctly", func(t *testing.T) {
+		handWithAceHigh := Hand{deck.Card{'A', 'H'}, deck.Card{3, 'D'}}
+		if handWithAceHigh.Value() != 14 {
+			t.Errorf("Expected hand value to be 14, got %d", handWithAceHigh.Value())
+		}
+
+		handWithAceLow := Hand{deck.Card{'A', 'H'}, deck.Card{'Q', 'D'}, deck.Card{4, 'D'}}
+		if handWithAceLow.Value() != 15 {
+			t.Errorf("Expected hand value to be 15, got %d", handWithAceLow.Value())
+		}
+
+		handWithTwoAces := Hand{deck.Card{'A', 'H'}, deck.Card{'A', 'C'}}
+		if handWithTwoAces.Value() != 12 {
+			t.Errorf("Expected hand value to be 12, got %d", handWithTwoAces.Value())
+		}
+
+		handWithThreeAces := Hand{deck.Card{'A', 'H'}, deck.Card{'A', 'C'}, deck.Card{'A', 'D'}}
+		if handWithThreeAces.Value() != 13 {
+			t.Errorf("Expected hand value to be 13, got %d", handWithThreeAces.Value())
+		}
+
+	})
+
 	t.Run("DealHand returns hand", func(t *testing.T) {
 		shuffledDeck := deck.ShuffledDeck()
-		expectedHand := Hand{deck.Card{Value: 10, Suit: 'H'}, deck.Card{Value: 7, Suit: 'H'}, deck.Card{Value: 'J', Suit: 'S'}, deck.Card{Value: 'Q', Suit: 'S'}}
+		expectedHand := Hand{deck.Card{Rank: 10, Suit: 'H'}, deck.Card{Rank: 7, Suit: 'H'}, deck.Card{Rank: 'J', Suit: 'S'}, deck.Card{Rank: 'Q', Suit: 'S'}}
 		hand := DealHand(&shuffledDeck)
 
 		if len(hand) != 2 {

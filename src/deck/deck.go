@@ -6,8 +6,8 @@ import (
 )
 
 type Card struct {
-	Value rune
-	Suit  rune
+	Rank rune
+	Suit rune
 }
 
 type Deck []Card

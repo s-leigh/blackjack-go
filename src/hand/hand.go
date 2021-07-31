@@ -9,6 +9,39 @@ const handSize = 2
 
 type Hand []deck.Card
 
+func (h Hand) Value() int {
+	value := 0
+	for _, card := range h {
+		if card.Rank <= 10 {
+			value += int(card.Rank)
+		} else if card.Rank != 'A' {
+			value += 10
+		}
+	}
+	// calculate aces after all other cards added up
+	numberOfAces := func() int {
+		count := 0
+		for _, card := range h {
+			if card.Rank == 'A' {
+				count++
+			}
+		}
+		return count
+	}()
+
+	if numberOfAces == 0 {
+		return value
+	}
+
+	if value + numberOfAces < 11 {
+		value += 10 + numberOfAces
+	} else {
+		value += numberOfAces
+	}
+
+	return value
+}
+
 func DealHand(shuffledDeck *deck.Deck) Hand {
 	cards := (*shuffledDeck)[:handSize]
 	*shuffledDeck = (*shuffledDeck)[handSize:]
@@ -30,13 +63,13 @@ func StringRepresentation(hand Hand, playersHand bool) string {
 	for i := 0; i < numCardsToShow; i++ {
 		card := hand[i]
 		var value string
-		if card.Value > 10 {
-			value = string(card.Value)
+		if card.Rank > 10 {
+			value = string(card.Rank)
 		} else {
-			value = fmt.Sprintf("%d", card.Value)
+			value = fmt.Sprintf("%d", card.Rank)
 		}
 		stringRep += fmt.Sprintf("%v of %v", value, string(card.Suit))
-		if i != len(hand) - 1 {
+		if i != len(hand)-1 {
 			stringRep += ", "
 		}
 		if !playersHand {
