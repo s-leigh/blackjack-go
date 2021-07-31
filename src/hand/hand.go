@@ -7,11 +7,21 @@ import (
 
 const handSize = 2
 
-type Hand []deck.Card
+type Owner int
+
+const (
+	dealer Owner = iota
+	player
+)
+
+type Hand struct {
+	cards []deck.Card
+	owner Owner
+}
 
 func (h Hand) Value() int {
 	value := 0
-	for _, card := range h {
+	for _, card := range h.cards {
 		if card.Rank <= 10 {
 			value += int(card.Rank)
 		} else if card.Rank != 'A' {
@@ -21,7 +31,7 @@ func (h Hand) Value() int {
 	// calculate aces after all other cards added up
 	numberOfAces := func() int {
 		count := 0
-		for _, card := range h {
+		for _, card := range h.cards {
 			if card.Rank == 'A' {
 				count++
 			}
@@ -33,7 +43,7 @@ func (h Hand) Value() int {
 		return value
 	}
 
-	if value + numberOfAces < 11 {
+	if value+numberOfAces < 11 {
 		value += 10 + numberOfAces
 	} else {
 		value += numberOfAces
@@ -46,22 +56,20 @@ func DealHand(shuffledDeck *deck.Deck) Hand {
 	cards := (*shuffledDeck)[:handSize]
 	*shuffledDeck = (*shuffledDeck)[handSize:]
 	var hand Hand
-	for _, card := range cards {
-		hand = append(hand, card)
-	}
+	hand.cards = cards
 	return hand
 }
 
-func StringRepresentation(hand Hand, playersHand bool) string {
+func (h Hand) StringRepresentation() string {
 	var stringRep string
 	var numCardsToShow int
-	if playersHand {
-		numCardsToShow = len(hand)
+	if h.owner == player {
+		numCardsToShow = len(h.cards)
 	} else {
 		numCardsToShow = 1
 	}
 	for i := 0; i < numCardsToShow; i++ {
-		card := hand[i]
+		card := h.cards[i]
 		var value string
 		if card.Rank > 10 {
 			value = string(card.Rank)
@@ -69,10 +77,10 @@ func StringRepresentation(hand Hand, playersHand bool) string {
 			value = fmt.Sprintf("%d", card.Rank)
 		}
 		stringRep += fmt.Sprintf("%v of %v", value, string(card.Suit))
-		if i != len(hand)-1 {
+		if i != len(h.cards)-1 {
 			stringRep += ", "
 		}
-		if !playersHand {
+		if h.owner == dealer {
 			stringRep += "[hidden card]"
 		}
 	}

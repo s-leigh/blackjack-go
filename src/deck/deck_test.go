@@ -11,7 +11,9 @@ func TestDeck(t *testing.T) {
 	t.Run("orderedDeck creates first Card", func(t *testing.T) {
 		got := orderedDeck()[0]
 		want := Card{'A', 'C'}
-		if got != want { t.Errorf("got %q want %q", got, want)}
+		if got != want {
+			t.Errorf("got %q want %q", got, want)
+		}
 	})
 
 	t.Run("orderedDeck creates last Card", func(t *testing.T) {
