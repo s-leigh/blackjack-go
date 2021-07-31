@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const dealerSticksOnValue = 17
+
 func main() {
 	fmt.Println("Welcome to Blackjack!")
 
@@ -14,20 +16,59 @@ func main() {
 	playerHand := hand.DealHand(&shuffledDeck, false)
 	dealerHand := hand.DealHand(&shuffledDeck, true)
 
-	fmt.Printf("Your hand: %v\n", playerHand.StringRepresentation())
-	fmt.Printf("Dealer's hand: %v\n", dealerHand.StringRepresentation())
+	fmt.Printf("Your hand: %v\n", playerHand.PlayerStringRepresentation())
+	fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(true))
 
+	playerGameLoop(shuffledDeck, &playerHand)
+	dealerGameLoop(shuffledDeck, &dealerHand)
+	checkWinCondition(playerHand, dealerHand)
+}
+
+func playerGameLoop(shuffledDeck deck.Deck, playerHand *hand.Hand) {
 	var input string
-	fmt.Println("[H]it or [S]tick?")
+	for strings.ToLower(input) != "s" {
+		fmt.Println("[H]it or [S]tick?")
+		_, err := fmt.Scan(&input)
+		if err != nil {
+			fmt.Println("Error accepting input, terminating...")
+			return
+		}
 
-	_, err := fmt.Scan(&input)
-	if err != nil {
-		fmt.Println("Error accepting input, terminating...")
-		return
+		if strings.ToLower(input) == "h" {
+			playerHand.DealCard(&shuffledDeck)
+			fmt.Printf("Your hand: %v\n", playerHand.PlayerStringRepresentation())
+			if isGameOver(playerHand) {
+				return
+			}
+		}
 	}
+}
 
-	if strings.ToLower(input) == "h" {
-		playerHand.DealCard(&shuffledDeck)
-		fmt.Printf("Your hand: %v\n", playerHand.StringRepresentation())
+func dealerGameLoop(shuffledDeck deck.Deck, dealerHand *hand.Hand) {
+	fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(false))
+	for dealerHand.Value() < dealerSticksOnValue {
+		dealerHand.DealCard(&shuffledDeck)
+		fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(false))
 	}
+}
+
+func isGameOver(hand *hand.Hand) bool {
+	return hand.Value() >= 21
+}
+
+func checkWinCondition(playerHand, dealerHand hand.Hand) {
+	playerScore := playerHand.Value()
+	dealerScore := dealerHand.Value()
+	if playerScore == 21 {
+		fmt.Println("Blackjack! You win!")
+	} else if playerScore > 21 {
+		fmt.Println("Bust!")
+	} else {
+		if playerScore > dealerScore {
+			fmt.Println("You win!")
+		} else {
+			fmt.Println("You lose!")
+		}
+	}
+	fmt.Printf("Final scores:\nDealer: %d, You: %d", dealerScore, playerScore)
 }
