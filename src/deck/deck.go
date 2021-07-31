@@ -5,15 +5,18 @@ import (
 	"time"
 )
 
-type card struct {
-	value rune
-	suit rune
+type Card struct {
+	Value rune
+	Suit  rune
 }
 
-type Deck []card
+type Deck []Card
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func ShuffledDeck() Deck {
-	rand.Seed(time.Now().UnixNano())
 	deck := orderedDeck()
 	rand.Shuffle(len(deck), func(i, j int) { deck[i], deck[j] = deck[j], deck[i] })
 	return deck
@@ -25,7 +28,7 @@ func orderedDeck() Deck {
 	var orderedDeck Deck
 	for _, value := range values {
 		for _, suit := range suits {
-			card := card{value, suit}
+			card := Card{value, suit}
 			orderedDeck = append(orderedDeck, card)
 		}
 	}
