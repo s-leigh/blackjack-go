@@ -10,7 +10,7 @@ type card struct {
 	suit rune
 }
 
-type Deck [52]card
+type Deck []card
 
 func ShuffledDeck() Deck {
 	rand.Seed(time.Now().UnixNano())
@@ -23,11 +23,10 @@ func orderedDeck() Deck {
 	var values = [13]rune{'A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'}
 	var suits = [4]rune{'C', 'D', 'H', 'S'}
 	var orderedDeck Deck
-	for valueIndex, value := range values {
-		for suitIndex, suit := range suits {
+	for _, value := range values {
+		for _, suit := range suits {
 			card := card{value, suit}
-			deckIndex := valueIndex + (suitIndex * len(values))
-			orderedDeck[deckIndex] = card
+			orderedDeck = append(orderedDeck, card)
 		}
 	}
 	return orderedDeck
