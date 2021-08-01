@@ -4,6 +4,8 @@ import (
 	"./deck"
 	"./hand"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 )
 
@@ -19,12 +21,12 @@ func main() {
 	fmt.Printf("Your hand: %v\n", playerHand.PlayerStringRepresentation())
 	fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(true))
 
-	playerGameLoop(shuffledDeck, &playerHand)
-	dealerGameLoop(shuffledDeck, &dealerHand)
-	checkWinCondition(playerHand, dealerHand)
+	playerGameLoop(&shuffledDeck, &playerHand)
+	dealerGameLoop(&shuffledDeck, &dealerHand)
+	checkWinCondition(playerHand, dealerHand, os.Stdout)
 }
 
-func playerGameLoop(shuffledDeck deck.Deck, playerHand *hand.Hand) {
+func playerGameLoop(shuffledDeck *deck.Deck, playerHand *hand.Hand) {
 	var input string
 	for strings.ToLower(input) != "s" {
 		fmt.Println("[H]it or [S]tick?")
@@ -35,7 +37,7 @@ func playerGameLoop(shuffledDeck deck.Deck, playerHand *hand.Hand) {
 		}
 
 		if strings.ToLower(input) == "h" {
-			playerHand.DealCard(&shuffledDeck)
+			playerHand.DealCard(shuffledDeck)
 			fmt.Printf("Your hand: %v\n", playerHand.PlayerStringRepresentation())
 			if isGameOver(playerHand) {
 				return
@@ -44,10 +46,10 @@ func playerGameLoop(shuffledDeck deck.Deck, playerHand *hand.Hand) {
 	}
 }
 
-func dealerGameLoop(shuffledDeck deck.Deck, dealerHand *hand.Hand) {
+func dealerGameLoop(shuffledDeck *deck.Deck, dealerHand *hand.Hand) {
 	fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(false))
 	for dealerHand.Value() < dealerSticksOnValue {
-		dealerHand.DealCard(&shuffledDeck)
+		dealerHand.DealCard(shuffledDeck)
 		fmt.Printf("Dealer's hand: %v\n", dealerHand.DealerStringRepresentation(false))
 	}
 }
@@ -56,19 +58,19 @@ func isGameOver(hand *hand.Hand) bool {
 	return hand.Value() >= 21
 }
 
-func checkWinCondition(playerHand, dealerHand hand.Hand) {
+func checkWinCondition(playerHand, dealerHand hand.Hand, output io.Writer) {
 	playerScore := playerHand.Value()
 	dealerScore := dealerHand.Value()
 	if playerScore == 21 {
-		fmt.Println("Blackjack! You win!")
+		fmt.Fprintln(output, "Blackjack! You win!")
 	} else if playerScore > 21 {
-		fmt.Println("Bust!")
+		fmt.Fprintln(output, "Bust!")
 	} else {
 		if playerScore > dealerScore {
-			fmt.Println("You win!")
+			fmt.Fprintln(output, "You win!")
 		} else {
-			fmt.Println("You lose!")
+			fmt.Fprintln(output, "You lose!")
 		}
 	}
-	fmt.Printf("Final scores:\nDealer: %d, You: %d", dealerScore, playerScore)
+	fmt.Fprintf(output, "Final scores:\nDealer: %d, You: %d\n", dealerScore, playerScore)
 }

@@ -22,9 +22,9 @@ func TestHand(t *testing.T) {
 	})
 
 	t.Run("Hand value with aces calculated correctly", func(t *testing.T) {
-		handWithAceHigh := Hand{[]deck.Card{{'A', 'H'}, {3, 'D'}}}
-		if handWithAceHigh.Value() != 14 {
-			t.Errorf("Expected hand value to be 14, got %d", handWithAceHigh.Value())
+		handWithAceHigh := Hand{[]deck.Card{{'A', 'S'}, {'Q', 'D'}}}
+		if handWithAceHigh.Value() != 21 {
+			t.Errorf("Expected hand value to be 21, got %d", handWithAceHigh.Value())
 		}
 
 		handWithAceLow := Hand{[]deck.Card{{'A', 'H'}, {'Q', 'D'}, {4, 'D'}}}
@@ -63,8 +63,9 @@ func TestHand(t *testing.T) {
 		shuffledDeck := deck.ShuffledDeck()
 		DealHand(&shuffledDeck, false)
 		DealHand(&shuffledDeck, true)
-		if len(shuffledDeck) != 48 {
-			t.Errorf("Expected deck size of 50, got %v", len(shuffledDeck))
+		expectedDeckSize := len(shuffledDeck)
+		if expectedDeckSize != 48 {
+			t.Errorf("Expected deck size of 48, got %v", expectedDeckSize)
 		}
 	})
 
