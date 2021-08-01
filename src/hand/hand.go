@@ -34,7 +34,7 @@ func (h Hand) Value() int {
 		return value
 	}
 
-	if value + numberOfAces <= 11 {
+	if value+numberOfAces <= 11 {
 		value += 10 + numberOfAces
 	} else {
 		value += numberOfAces

@@ -8,9 +8,8 @@ import (
 func (h Hand) DealerStringRepresentation(onlyShowFirstCard bool) string {
 	if onlyShowFirstCard {
 		return cardStringRepresentation([]deck.Card{h.Cards[0]}) + ", [hidden card]"
-	} else {
-		return cardStringRepresentation(h.Cards) + fmt.Sprintf(" - value: %d", h.Value())
 	}
+	return cardStringRepresentation(h.Cards) + fmt.Sprintf(" - value: %d", h.Value())
 }
 
 func (h Hand) PlayerStringRepresentation() string {
